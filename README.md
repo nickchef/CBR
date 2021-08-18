@@ -1,2 +1,14 @@
 # CBR
-Convolution, BatchNorm and ReLU
+The Convolution, BatchNorm and ReLU is a basic unit of CNN.
+
+This test wants you to write the function of these three parts by C/C++.
+
+Forward Only; Backward is a PLUS;
+Verify the results by test case and calculate the computation efficiency
+ Select at least one of below advantage features to implement
+
+Fuse the Conv + BatchNorm + ReLU into one function to reduce the memory access
+https://sc18.supercomputing.org/proceedings/tech_poster/poster_files/post155s2-file2.pdf
+
+Parallel with popular parallel technique. e.g. OpenMP, TBB
+https://computing.llnl.gov/tutorials/openMP/
