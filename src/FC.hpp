@@ -7,9 +7,6 @@
 
 class FC{
 public:
-    void forward();
-
-    void backward();
 
 private:
     vector<Dtype> weight;

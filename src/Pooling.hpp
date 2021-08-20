@@ -5,17 +5,9 @@
 #ifndef CBR_POOLING_HPP
 #define CBR_POOLING_HPP
 
-class Pooling:public Layer{
+class Pooling{
 public:
     explicit Pooling(int ps = 2, int s = 2):pool_size(ps), stride(s){}
-
-    void forward() {
-
-    }
-
-    void backward() override {
-
-    }
 
 private:
     int stride;

@@ -9,6 +9,7 @@
 #include <vector>
 #include <Dtype.hpp>
 #include <random>
+#include <numeric>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ public:
     virtual void forward(vector<vector<vector<BYTE>>>&, vector<vector<vector<float>>>&, vector<int>&) = 0;
     virtual void backward() = 0;
 };
+
 
 
 #endif //CBR_LAYER_H

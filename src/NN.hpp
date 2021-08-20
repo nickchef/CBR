@@ -12,6 +12,7 @@
 #include <omp.h>
 #include <cstring>
 #include <malloc.h>
+#include <memory>
 
 #define CHANNEL (3)
 #define PIXEL_NUM (3072)
@@ -27,12 +28,15 @@ using namespace std;
 class NN {
 public:
 
+    NN(){
+        layers.push_back(shared_ptr<Layer>(new ConvLayer(1, 2 , 3, 8, 3)));
+    };
+
     void init(){
 
     }
 
     void load(){
-
         vector<string> filename;
         for(int i = 1; i < BATCH_NUM + 1; i ++){
             filename.emplace_back(BATCH_NAME + to_string(i) + BATCH_EXT);
@@ -67,8 +71,19 @@ public:
     }
 
     void train(int batch=0){
-        head = vector<vector<vector<float>>>(shape[0], vector<vector<float>>(shape[1], vector<float>(shape[2], 0)));
-        bottom = vector<vector<vector<float>>>(shape[0], vector<vector<float>>(shape[1], vector<float>(shape[2], 0)));
+        layers[0]->forward(x_batch[0][0], bottom, shape);
+        for(int i: shape){
+            cout << i << endl;
+        }
+
+        for(const vector<vector<float>>& i : bottom){
+            for(const vector<float>& j : i){
+                for(float k : j){
+                    cout << k << " ";
+                }
+                cout << endl;
+            }
+        }
     };
 
     void loss();
@@ -93,7 +108,7 @@ private:
      */
     vector<BYTE> y_test;
 
-    vector<Layer> layers;
+    vector<shared_ptr<Layer>> layers;
 
     vector<vector<vector<float>>> head;
     vector<vector<vector<float>>> bottom;
@@ -102,6 +117,7 @@ private:
 
     float lr = 0.01;
 };
+
 
 
 #endif //CBR_NN_HPP
