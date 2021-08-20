@@ -1,0 +1,9 @@
+[
+  {
+    "type": "conv",
+    "filter_size": "3",
+    "filter_channel": "3",
+    "stride": "1",
+    "padding": "0"
+  }
+]
