@@ -21,22 +21,5 @@ Using data set cifar-10:
 
 * image of 72x72 in 3 channels
 
-Conv Layer 1:
-
-* filter size 3x3x3
-* filter num 10
-* stride 1
-* padding 0
-* Max_Pooling size 2 stride 2
-
-Conv layer 2:
-
-* filter size 3x3x10
-* filter num 5
-* stride 1
-* padding 0
-* Max_Pooling size 2 stride 2
-
-2 FC Layer
-
-1 SoftMax Layer
+8/21 Update:
+Basically finished forward prop. Many optimization need to be done. Im2Col is so hard, MKL is so hard.

@@ -4,18 +4,15 @@
 #include <FC.hpp>
 #include <SoftMax.hpp>
 #include <Pooling.hpp>
-#include <Dtype.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <array>
 #include <omp.h>
 #include <cstring>
 #include <malloc.h>
 #include <memory>
 
 #define CHANNEL (3)
-#define PIXEL_NUM (3072)
 #define IMG_SIZE (32)
 #define LABEL_SIZE (1)
 #define BATCH_NUM (5)
@@ -29,12 +26,10 @@ class NN {
 public:
 
     NN(){
-        layers.push_back(shared_ptr<Layer>(new ConvLayer(1, 2 , 3, 8, 3)));
+        layers.push_back(shared_ptr<Layer>(new ConvLayer(1, 2 , 3, 8, CHANNEL)));
+        layers.push_back(shared_ptr<Layer>(new Pooling(2, 2)));
+        layers.push_back(shared_ptr<Layer>(new SoftMax(10, 17*17*8)));
     };
-
-    void init(){
-
-    }
 
     void load(){
         vector<string> filename;
@@ -71,12 +66,19 @@ public:
     }
 
     void train(int batch=0){
-        layers[0]->forward(x_batch[0][0], bottom, shape);
+        layers[0]->forward(x_batch[0][0], head, shape);
+        for(int i = 1; i < layers.size(); i ++){
+            layers[i]->forward(head, bottom, shape);
+            if(++i<layers.size()){
+                layers[i]->forward(bottom, head, shape);
+            }
+        }
+
         for(int i: shape){
             cout << i << endl;
         }
 
-        for(const vector<vector<float>>& i : bottom){
+        for(const vector<vector<float>>& i : head){
             for(const vector<float>& j : i){
                 for(float k : j){
                     cout << k << " ";
@@ -86,8 +88,8 @@ public:
         }
     };
 
-    void loss();
-    void eval();
+    void loss(){}
+    void eval(){}
 
 private:
     vector<vector<vector<vector<vector<BYTE>>>>> x_batch;

@@ -1,11 +1,6 @@
-//
-// Created by 0 on 2021/8/19.
-//
-
 #ifndef CBR_CONVLAYER_HPP
 #define CBR_CONVLAYER_HPP
 #include <Layer.hpp>
-#include <chrono>
 
 using namespace Eigen;
 
@@ -15,7 +10,6 @@ public:
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         default_random_engine e(seed);
         normal_distribution<float> dis(0,1);
-
 
 //        int weightMat_row = f*f*c;
 //        weightMat = MatrixXf(weightMat_row, f);
@@ -33,13 +27,12 @@ public:
             for(int j = 0; j < channel; j++){
                 for(int k = 0; k < filter_size; k++){
                     for(int m = 0; m < filter_size; m++){
-                        weight[i][j][k][m] = dis(e);
+                        weight[i][j][k][m] = (float)(dis(e) * 0.1);
                     }
                 }
             }
         }
     }
-
 
 //    void im2col(Eigen::MatrixXf& target, const vector<vector<vector<float>>>& in){
 //        for(int filter = 0; filter < filter_num; filter++){
@@ -119,7 +112,7 @@ public:
         shape = output_shape;
     };
 
-    void forward(vector<vector<vector<BYTE>>>& _in, vector<vector<vector<float>>>& out, vector<int>& shape) override{
+    void forward(vector<vector<vector<BYTE>>>& in, vector<vector<vector<float>>>& out, vector<int>& shape) override{
         vector<int> output_shape(3,0);
         output_shape[0] = filter_num;
         output_shape[1] = shape[1] + padding*2 - filter_size + 1;
@@ -127,7 +120,6 @@ public:
 
         out = vector<vector<vector<float>>>(output_shape[0], vector<vector<float>>(output_shape[1], vector<float>(output_shape[2], 0)));
 
-        vector<vector<vector<BYTE>>> in = _in;
 
         if(padding > 0){
             for(vector<vector<BYTE>>& layer : in){

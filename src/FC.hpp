@@ -9,7 +9,6 @@ class FC{
 public:
 
 private:
-    vector<Dtype> weight;
     vector<double> bias;
 };
 
