@@ -26,4 +26,4 @@ Using data set cifar-10:
 实现了简单的OMP多线程, 在i9-9900K上将单图片卷积(8卷积核)+池化+SoftMax过程由6秒降至了2秒.
 
 可以进一步采用的改善措施:
-GPU运算, im2col+矩阵运算, SIMD(Eigen, BLAS, MKL)
+GPU运算, im2col+矩阵运算库(MKL, Eigen, BLAS), 内存排列优化
