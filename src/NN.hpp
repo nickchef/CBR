@@ -7,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <omp.h>
 #include <cstring>
 #include <malloc.h>
 #include <memory>
@@ -24,18 +23,22 @@ using namespace std;
 
 class NN {
 public:
-
-    NN(){
-        layers.push_back(shared_ptr<Layer>(new ConvLayer(1, 2 , 3, 8, CHANNEL)));
-        layers.push_back(shared_ptr<Layer>(new Pooling(2, 2)));
-        layers.push_back(shared_ptr<Layer>(new SoftMax(10, 17*17*8)));
-    };
+    explicit NN(bool test=false):test(test){
+        // 初始化层及参数, 测试案例中为方便计算仅加入了一个单核卷积层
+        if(test){
+            layers.push_back(shared_ptr<Layer>(new ConvLayer(1, 1, 3, 1, CHANNEL, true)));
+        }else{
+            layers.push_back(shared_ptr<Layer>(new ConvLayer(1, 1, 3, 8, CHANNEL)));
+            layers.push_back(shared_ptr<Layer>(new Pooling(2, 2)));
+            layers.push_back(shared_ptr<Layer>(new SoftMax(10, 17*17*8)));
+        }
+    }
 
     void load(){
+        //从文件中读取图片信息, 所用数据集为32x32的3通道图片
         vector<string> filename;
         for(int i = 1; i < BATCH_NUM + 1; i ++){
             filename.emplace_back(BATCH_NAME + to_string(i) + BATCH_EXT);
-            cout << filename[i-1] << endl;
         }
 
         for(int i = 0; i < BATCH_NUM; i++){
@@ -66,25 +69,40 @@ public:
     }
 
     void train(int batch=0){
+        auto time = chrono::system_clock::now();
         layers[0]->forward(x_batch[0][0], head, shape);
-        for(int i = 1; i < layers.size(); i ++){
-            layers[i]->forward(head, bottom, shape);
-            if(++i<layers.size()){
-                layers[i]->forward(bottom, head, shape);
+        int layer_idx = 1;
+        for(; layer_idx < layers.size(); layer_idx ++){
+            layers[layer_idx]->forward(head, bottom, shape);
+            if(++layer_idx<layers.size()){
+                layers[layer_idx]->forward(bottom, head, shape);
             }
         }
 
-        for(int i: shape){
-            cout << i << endl;
-        }
+        auto duration = chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - time);
+        cout << "Time cost: " << duration.count() << "ms" << endl;
 
-        for(const vector<vector<float>>& i : head){
+        cout << "Output shape:";
+        for(int i: shape){
+
+            cout << i << " ";
+        }
+        cout << endl;
+
+        cout << "output" << endl;
+        for(const vector<vector<float>>& i : layer_idx%2==0?bottom:head){
             for(const vector<float>& j : i){
                 for(float k : j){
                     cout << k << " ";
                 }
                 cout << endl;
             }
+            cout << endl;
+        }
+        if(test){
+            assert(head[0][30][0] ==  float(13.758774));
+            assert(head[0][30][1] = float(37.0093));
+            //计算了矩阵中的部分结果以作为简单正确性的测试
         }
     };
 
@@ -96,7 +114,9 @@ private:
     /*
      * 1st Dimension: Batch;
      * 2nd Dimension: Sample;
-     * 3rd Dimension: img;
+     * 3rd Dimension: Channel;
+     * 4th Dimension: Rows;
+     * 5th Dimension: Column
      */
     vector<vector<BYTE>> y_batch;
     /*
@@ -104,10 +124,6 @@ private:
      * 2nd Dimension: Label;
      */
     vector<vector<vector<vector<BYTE>>>> x_test;
-    /*
-     * 1st Dimension: Sample;
-     * 2nd Dimension: img;
-     */
     vector<BYTE> y_test;
 
     vector<shared_ptr<Layer>> layers;
@@ -117,6 +133,7 @@ private:
 
     vector<int> shape;
 
+    bool test;
     float lr = 0.01;
 };
 

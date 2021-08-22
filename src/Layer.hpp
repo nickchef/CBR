@@ -16,7 +16,7 @@ typedef unsigned char BYTE;
 
 class Layer {
 public:
-    virtual void forward(vector<vector<vector<float>>>&, vector<vector<vector<float>>>&, vector<int>&) = 0;
+    virtual void forward(vector<vector<vector<float>>>&, vector<vector<vector<float>>>&, vector<int>&){};
     virtual void forward(vector<vector<vector<BYTE>>>&, vector<vector<vector<float>>>&, vector<int>&){};
     virtual void backward(){};
 };

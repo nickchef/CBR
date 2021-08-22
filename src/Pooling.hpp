@@ -12,7 +12,7 @@ public:
 
     void forward(vector<vector<vector<float>>>& in, vector<vector<vector<float>>>& out, vector<int>& shape) override{
         out = vector<vector<vector<float>>>(shape[0], vector<vector<float>>(shape[1]/2, vector<float>(shape[2]/2, 0)));
-
+        #pragma omp parallel for collapse(5)
         for(int channel = 0; channel < shape[0]; channel++){
             for(int y = 0; y <= shape[1] - pool_size; y+=stride){
                 for(int x = 0; x <= shape[2] - pool_size; x+=stride){

@@ -19,7 +19,11 @@ Select at least one of below advantage features to implement
 
 Using data set cifar-10:
 
-* image of 72x72 in 3 channels
+* image of 32x32 in 3 channels
 
-8/21 Update:
-Basically finished forward prop. Many optimization need to be done. Im2Col is so hard, MKL is so hard.
+实现了朴素卷积过程,设图片总像素为n,通道为c, 卷积核边长为m,实际时间复杂度为O(n^2m^2), 空间复杂度为O(n).
+
+实现了简单的OMP多线程, 在i9-9900K上将单图片卷积(8卷积核)+池化+SoftMax过程由6秒降至了2秒.
+
+可以进一步采用的改善措施:
+GPU运算, im2col+矩阵运算, SIMD(Eigen, BLAS, MKL)

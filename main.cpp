@@ -1,15 +1,9 @@
-#include <iostream>
-#include <random>
-#include <Eigen/Core>
-#include <Eigen/Eigen>
-#include <chrono>
 #include <NN.hpp>
 
 using namespace std;
 
-int main()
-{
-    NN nn = NN();
+int main(int argc, char** argv){
+    NN nn = NN(true);
     nn.load();
     nn.train();
 }
